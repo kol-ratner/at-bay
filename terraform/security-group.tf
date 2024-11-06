@@ -2,20 +2,13 @@
 resource "aws_security_group" "alb" {
   name        = "alb-sg"
   description = "Security group for ALB"
-  vpc_id      = aws_vpc.primary.id
+  vpc_id      = aws_vpc.main.id
 
   ingress {
     from_port   = 443
     to_port     = 443
     protocol    = "tcp"
     cidr_blocks = ["0.0.0.0/0"]
-  }
-
-  egress {
-    from_port       = 80
-    to_port         = 80
-    protocol        = "tcp"
-    security_groups = [aws_security_group.ec2.id]
   }
 
   tags = {
@@ -27,14 +20,7 @@ resource "aws_security_group" "alb" {
 resource "aws_security_group" "ec2" {
   name        = "ec2-sg"
   description = "Security group for EC2 instances"
-  vpc_id      = aws_vpc.primary.id
-
-  ingress {
-    from_port       = 80
-    to_port         = 80
-    protocol        = "tcp"
-    security_groups = [aws_security_group.alb.id]
-  }
+  vpc_id      = aws_vpc.main.id
 
   egress {
     from_port   = 0
@@ -46,4 +32,23 @@ resource "aws_security_group" "ec2" {
   tags = {
     Name = "ec2-sg"
   }
+}
+
+# Security Group Rules
+resource "aws_security_group_rule" "alb_to_ec2" {
+  type                     = "egress"
+  from_port                = 80
+  to_port                  = 80
+  protocol                 = "tcp"
+  source_security_group_id = aws_security_group.ec2.id
+  security_group_id        = aws_security_group.alb.id
+}
+
+resource "aws_security_group_rule" "ec2_from_alb" {
+  type                     = "ingress"
+  from_port                = 80
+  to_port                  = 80
+  protocol                 = "tcp"
+  source_security_group_id = aws_security_group.alb.id
+  security_group_id        = aws_security_group.ec2.id
 }
