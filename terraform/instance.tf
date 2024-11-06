@@ -4,7 +4,7 @@ resource "aws_lb" "web_alb" {
   name               = "hello-world-alb"
   internal           = false
   load_balancer_type = "application"
-  security_groups    = [aws_security_group.alb_sg.id]
+  security_groups    = [aws_security_group.alb.id]
   subnets            = [aws_subnet.public_1.id, aws_subnet.public_2.id]
 }
 

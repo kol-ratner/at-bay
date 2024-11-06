@@ -2,7 +2,7 @@
 resource "aws_security_group" "alb" {
   name        = "alb-sg"
   description = "Security group for ALB"
-  vpc_id      = aws_vpc.main.id
+  vpc_id      = aws_vpc.primary.id
 
   ingress {
     from_port   = 443
@@ -20,7 +20,7 @@ resource "aws_security_group" "alb" {
 resource "aws_security_group" "ec2" {
   name        = "ec2-sg"
   description = "Security group for EC2 instances"
-  vpc_id      = aws_vpc.main.id
+  vpc_id      = aws_vpc.primary.id
 
   egress {
     from_port   = 0
