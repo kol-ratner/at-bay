@@ -45,13 +45,21 @@ jobs:
           name: tf-plan
           path: terraform/tfplan
           retention-days: 5
-
-      - name: Download Plan
+      
+      - name: Get PR Number
+        id: pr_number
         if: github.event_name == 'push'
-        uses: actions/download-artifact@v3
+        run: |
+          PR_NUMBER=$(git log -1 --pretty=%B | grep -oP '#\K[0-9]+')
+          echo "PR_NUMBER=$PR_NUMBER" >> $GITHUB_OUTPUT
+
+      - name: Download Plan from PR
+        if: github.event_name == 'push'
+        uses: dawidd6/action-download-artifact@v2
         with:
+          workflow: terraform.yaml
           name: tf-plan
-          path: terraform/tfplan
+          pr: ${{ steps.pr_number.outputs.PR_NUMBER }}
 
       - name: Terraform Apply
         if: github.event_name == 'push'
