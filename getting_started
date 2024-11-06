@@ -1,0 +1,25 @@
+#!/bin/sh
+set -e
+
+source .env
+
+cd pre-tf
+
+terraform init
+terraform apply \
+    -var="aws_region=$AWS_REGION" \
+    -var="aws_access_key_id=$AWS_ACCESS_KEY_ID" \
+    -var="aws_secret_access_key=$AWS_SECRET_ACCESS_KEY" \
+    -target=aws_s3_bucket.terraform_state \
+    -target=aws_s3_bucket_versioning.terraform_state \
+    -target=aws_s3_bucket_server_side_encryption_configuration.terraform_state \
+    -target=aws_dynamodb_table.terraform_locks \
+    -target=aws_iam_openid_connect_provider.github \
+    -target=aws_iam_role.github_actions \
+    -target=aws_iam_role_policy_attachment.github_actions
+
+
+
+
+
+
