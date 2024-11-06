@@ -1,11 +1,31 @@
 
 # Application Load Balancer
 resource "aws_lb" "web_alb" {
-  name               = "hello-world-alb"
+  name               = "primary-alb"
   internal           = false
   load_balancer_type = "application"
   security_groups    = [aws_security_group.alb.id]
   subnets            = [aws_subnet.public_1.id, aws_subnet.public_2.id]
+}
+
+# Create ACM certificate
+resource "aws_acm_certificate" "alb" {
+  domain_name       = "*.elb.amazonaws.com"
+  validation_method = "DNS"
+}
+
+# Add HTTPS listener to ALB
+resource "aws_lb_listener" "https" {
+  load_balancer_arn = aws_lb.web_alb.arn
+  port              = "443"
+  protocol          = "HTTPS"
+  ssl_policy        = "ELBSecurityPolicy-2016-08"
+  certificate_arn   = aws_acm_certificate.alb.arn
+
+  default_action {
+    type             = "forward"
+    target_group_arn = aws_lb_target_group.web_tg.arn
+  }
 }
 
 resource "aws_lb_target_group" "web_tg" {
@@ -43,12 +63,18 @@ resource "aws_autoscaling_group" "web_asg" {
     id      = aws_launch_template.web_lt.id
     version = "$Latest"
   }
+
+  tag {
+    key                 = "Name"
+    value               = "web-asg"
+    propagate_at_launch = true
+  }
 }
 
 # Launch Template
 resource "aws_launch_template" "web_lt" {
   name_prefix            = "web-"
-  image_id               = "ami-0c55b159cbfafe1f0"
+  image_id               = "ami-0694d931cee176e7d"
   instance_type          = "t2.micro"
   vpc_security_group_ids = [aws_security_group.ec2.id]
 
@@ -61,4 +87,11 @@ resource "aws_launch_template" "web_lt" {
     echo "<h1>Hello World!</h1>" > /var/www/html/index.html
     EOF
   )
+
+  tag_specifications {
+    resource_type = "instance"
+    tags = {
+      Name = "web-server"
+    }
+  }
 }
