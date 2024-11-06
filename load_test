@@ -1,0 +1,7 @@
+#!/bin/sh
+
+# First run the load test and save results
+echo "GET https://primary-alb-1758078955.eu-west-1.elb.amazonaws.com/" | vegeta attack -rate=3000/s -duration=10m -insecure | tee results.bin | vegeta report
+
+# Then create the plot from the saved results
+vegeta plot results.bin > loadtest.html
