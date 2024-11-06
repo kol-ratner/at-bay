@@ -58,8 +58,8 @@ jobs:
         if: github.event_name == 'push'
         uses: dawidd6/action-download-artifact@v2
         with:
-          workflow: terraform.yaml
           name: tf-plan
+          workflow: cicd.yaml
           pr: ${{ steps.pr_number.outputs.PR_NUMBER }}
 
       - name: Terraform Apply
