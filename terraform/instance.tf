@@ -8,10 +8,13 @@ resource "aws_lb" "web_alb" {
   subnets            = [aws_subnet.public_1.id, aws_subnet.public_2.id]
 }
 
-# Create ACM certificate
 resource "aws_acm_certificate" "alb" {
-  domain_name       = "*.elb.amazonaws.com"
+  domain_name       = aws_lb.web_alb.dns_name
   validation_method = "DNS"
+}
+
+resource "aws_acm_certificate_validation" "alb" {
+  certificate_arn = aws_acm_certificate.alb.arn
 }
 
 # Add HTTPS listener to ALB
@@ -20,7 +23,7 @@ resource "aws_lb_listener" "https" {
   port              = "443"
   protocol          = "HTTPS"
   ssl_policy        = "ELBSecurityPolicy-2016-08"
-  certificate_arn   = aws_acm_certificate.alb.arn
+  certificate_arn   = aws_acm_certificate_validation.alb.certificate_arn
 
   default_action {
     type             = "forward"
