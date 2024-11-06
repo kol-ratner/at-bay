@@ -104,10 +104,11 @@ resource "aws_launch_template" "web_lt" {
 
   user_data = base64encode(<<-EOF
     #!/bin/bash
-    yum update -y
-    yum install -y httpd
-    systemctl start httpd
-    systemctl enable httpd
+    apt-get update
+    apt-get install -y apache2
+    systemctl start apache2
+    systemctl enable apache2
+    mkdir -p /var/www/html
     echo "<h1>Hello World!</h1>" > /var/www/html/index.html
     EOF
   )
