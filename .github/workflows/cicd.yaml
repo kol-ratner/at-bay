@@ -1,4 +1,4 @@
-name: Merge Workflow
+name: Terraform Workflow
 on:
   pull_request:
     branches: [main]
