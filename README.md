@@ -30,3 +30,6 @@ Next you can run the init script to create the github actions related resources:
 ./getting_started
 ```
 
+The intention here is that the github actions resources would normally be created by Account Factory customizations on a per account basis. The getting_started script mocks that out for you, so that the github actions process can work against the core `terraform` resources that make up the solution.
+
+
