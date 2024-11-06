@@ -27,7 +27,7 @@ jobs:
       - name: Download Terraform Plan
         uses: actions/download-artifact@v3
         with:
-          name: terraform-plan
+          name: tf-plan
           path: terraform
 
       - name: Setup Terraform
