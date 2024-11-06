@@ -62,6 +62,7 @@ jobs:
           name: tf-plan
           workflow: cicd.yaml
           pr: ${{ steps.pr_number.outputs.PR_NUMBER }}
+          path: terraform
 
       - name: Terraform Apply
         if: github.event_name == 'push'
