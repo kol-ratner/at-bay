@@ -43,7 +43,7 @@ jobs:
         uses: actions/upload-artifact@v3
         with:
           name: tf-plan
-          path: tfplan
+          path: terraform/tfplan
           retention-days: 5
 
       - name: Download Plan
@@ -51,7 +51,7 @@ jobs:
         uses: actions/download-artifact@v3
         with:
           name: tf-plan
-          path: tfplan
+          path: terraform/tfplan
 
       - name: Terraform Apply
         if: github.event_name == 'push'
